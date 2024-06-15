@@ -13,4 +13,14 @@ class SupportController extends Controller
         $supports = $support->all();
         return view('admin.supports.index', compact('supports'));
     }
+
+    public function create()
+    {
+        return view('admin.supports.create');
+    }
+
+    public function store()
+    {
+        dd('Vou cadastrar uma dúvida');
+    }
 }

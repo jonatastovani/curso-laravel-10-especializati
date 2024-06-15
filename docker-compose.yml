@@ -9,8 +9,10 @@ services:
             dockerfile: Dockerfile
         restart: unless-stopped
         working_dir: /var/www/
-        volumes:
-            - ./:/var/www
+        # volumes:
+        #     - ./:/var/www
+        # volumes:
+        #     - projeto-sync:/var/www
         depends_on:
             - redis
         networks:
@@ -66,6 +68,10 @@ services:
         container_name: redis
         networks:
             - laravel
+
+# volumes:
+#     projeto-sync:
+#         external: true
 
 networks:
     laravel:

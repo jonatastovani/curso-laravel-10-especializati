@@ -1,0 +1,6 @@
+version: '2'
+syncs:
+  projeto-sync:
+    src: '.'  # Diretório raiz do seu projeto
+    sync_host_ip: 'localhost'
+    sync_host_port: 10871

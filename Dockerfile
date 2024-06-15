@@ -1,9 +1,5 @@
 FROM php:8.1-fpm
 
-# set your user name, ex: user=carlos
-ARG user=projetoroot
-ARG uid=1000
-
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
@@ -23,6 +19,13 @@ RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd sockets
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# set your user name, ex: user=carlos
+ARG user=projetoroot
+ARG uid=1000
+
+## Diretório da aplicação
+ARG APP_DIR=/var/www
+
 # Create system user to run Composer and Artisan Commands
 RUN useradd -G www-data,root -u $uid -d /home/$user $user
 RUN mkdir -p /home/$user/.composer && \
@@ -33,8 +36,17 @@ RUN pecl install -o -f redis \
     &&  rm -rf /tmp/pear \
     &&  docker-php-ext-enable redis
 
-# Set working directory
-WORKDIR /var/www
+WORKDIR $APP_DIR
+RUN cd $APP_DIR
+RUN chown www-data:www-data $APP_DIR
+
+COPY --chown=www-data:www-data . .
+RUN rm -rf vendor
+RUN composer install --no-interaction
+
+# Set permissions for storage and bootstrap/cache directories
+USER root
+RUN chmod -R 775 storage bootstrap/cache
 
 # Copy custom configurations PHP
 COPY docker/php/custom.ini /usr/local/etc/php/conf.d/custom.ini
